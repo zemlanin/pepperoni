@@ -221,7 +221,7 @@ def request_and_query(url, whole, query, regex):
     return query_html(response_body, query, regex)
 
 
-def pepperoni(url, whole, query, regex, interval, until_change, mac_sound):
+def pepperoni(url, whole, query, regex, interval, until_change, mac_sound, **kwargs):
     result = request_and_query(url, whole, query, regex)
 
     if result is None:
@@ -285,12 +285,4 @@ if __name__ == "__main__":
 
     logging.debug(args)
 
-    pepperoni(
-        args.url,
-        args.whole,
-        args.query,
-        args.regex,
-        args.interval,
-        args.until_change,
-        args.mac_sound,
-    )
+    pepperoni(**vars(args))
