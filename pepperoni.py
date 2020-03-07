@@ -93,29 +93,29 @@ parser.add_argument("--verbose", "-v", action="count", default=0, help="verbose 
 def get_selector(s):
     """
     >>> tag_selector = get_selector("h1")
-    >>> tag_selector("div", ())
+    >>> tag_selector("div", [])
     False
-    >>> tag_selector("h1", ())
+    >>> tag_selector("h1", [])
     True
 
     >>> id_selector = get_selector("#uniq")
-    >>> id_selector("div", (("class", "cls"), ))
+    >>> id_selector("div", [("class", "cls")])
     False
-    >>> id_selector("div", (("id", ""), ))
+    >>> id_selector("div", [("id", "")])
     False
-    >>> id_selector("div", (("id", "uniq"), ))
+    >>> id_selector("div", [("id", "uniq")])
     True
 
     >>> class_selector = get_selector(".cls")
-    >>> class_selector("div", (("id", "uniq"), ))
+    >>> class_selector("div", [("id", "uniq")])
     False
-    >>> class_selector("div", (("class", ""), ))
+    >>> class_selector("div", [("class", "")])
     False
-    >>> class_selector("div", (("class", "xxcls"), ))
+    >>> class_selector("div", [("class", "xxcls")])
     False
-    >>> class_selector("div", (("class", "cls"), ))
+    >>> class_selector("div", [("class", "cls")])
     True
-    >>> class_selector("div", (("class", "cls another"), ))
+    >>> class_selector("div", [("class", "cls another")])
     True
     """
     if s.startswith("#"):
