@@ -3,6 +3,7 @@
 # spices
 import os
 import time
+import platform
 
 # sause
 import re
@@ -56,8 +57,36 @@ parser.add_argument(
     "-u",
     default=False,
     action="store_true",
-    help="retry until match is changed",
+    help="retry until match is changed, then exit",
 )
+
+if platform.system() == "Darwin":
+    parser.add_argument(
+        "--sound",
+        "-s",
+        dest="mac_sound",
+        default="pop",
+        # `ls /System/Library/Sounds/`
+        choices=[
+            "basso",
+            "blow",
+            "bottle",
+            "frog",
+            "funk",
+            "glass",
+            "hero",
+            "morse",
+            "ping",
+            "pop",
+            "purr",
+            "sosumi",
+            "submarine",
+            "tink",
+        ],
+        type=str,
+        help="sound to play (macOS only)",
+    )
+
 parser.add_argument("--verbose", "-v", action="count", default=0, help="verbose output")
 
 
@@ -192,7 +221,7 @@ def request_and_query(url, whole, query, regex):
     return query_html(response_body, query, regex)
 
 
-def pepperoni(url, whole, query, regex, interval, until_change):
+def pepperoni(url, whole, query, regex, interval, until_change, mac_sound):
     result = request_and_query(url, whole, query, regex)
 
     if result is None:
@@ -217,7 +246,12 @@ def pepperoni(url, whole, query, regex, interval, until_change):
             logging.info(result)
 
         if prev != result:
-            print("\a", end="", flush=True)
+            if mac_sound:
+                os.system(
+                    f"afplay /System/Library/Sounds/{mac_sound.title()}.aiff 2> /dev/null"
+                )
+            else:
+                print("\a", end="", flush=True)
 
             if whole and prev and result:
                 d = difflib.Differ()
@@ -252,5 +286,11 @@ if __name__ == "__main__":
     logging.debug(args)
 
     pepperoni(
-        args.url, args.whole, args.query, args.regex, args.interval, args.until_change
+        args.url,
+        args.whole,
+        args.query,
+        args.regex,
+        args.interval,
+        args.until_change,
+        args.mac_sound,
     )
